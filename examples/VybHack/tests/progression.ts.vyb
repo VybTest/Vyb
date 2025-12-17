@@ -1,0 +1,116 @@
+"creates ladder at position":
+  confidence: 0.99
+  given:
+    x: 10
+    y: 10
+  when:
+    - "ladder = createLadder(x, y)"
+    - "ladderX = getLadderX(ladder)"
+    - "ladderY = getLadderY(ladder)"
+  then:
+    - "expect: ladderX == 10"
+    - "expect: ladderY == 10"
+
+"player can use ladder at same position":
+  confidence: 0.95
+  given:
+    playerX: 10
+    playerY: 10
+    ladderX: 10
+    ladderY: 10
+  when:
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "ladder = createLadder(ladderX, ladderY)"
+    - "canUse = canUseLadder(player, ladder)"
+  then:
+    - "expect: canUse == true"
+
+"cannot use ladder at different position":
+  confidence: 0.95
+  given:
+    playerX: 5
+    playerY: 5
+    ladderX: 10
+    ladderY: 10
+  when:
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "ladder = createLadder(ladderX, ladderY)"
+    - "canUse = canUseLadder(player, ladder)"
+  then:
+    - "expect: canUse == false"
+
+"tracks current floor number":
+  confidence: 0.99
+  given:
+    floor: 3
+  when:
+    - "state = createFloorState(floor)"
+    - "currentFloor = getFloorNumber(state)"
+  then:
+    - "expect: currentFloor == 3"
+
+"advances to next floor":
+  confidence: 0.99
+  given:
+    currentFloor: 2
+  when:
+    - "state = createFloorState(currentFloor)"
+    - "nextState = advanceFloor(state)"
+    - "newFloor = getFloorNumber(nextState)"
+  then:
+    - "expect: newFloor == 3"
+
+"scales enemy stats by floor":
+  confidence: 0.90
+  given:
+    baseHP: 30
+    floor: 3
+  when:
+    - "scaledHP = scaleEnemyHP(baseHP, floor)"
+  then:
+    - "expect: scaledHP == 36"
+
+"scales enemy attack by floor":
+  confidence: 0.90
+  given:
+    baseAttack: 10
+    floor: 3
+  when:
+    - "scaledAttack = scaleEnemyAttack(baseAttack, floor)"
+  then:
+    - "expect: scaledAttack == 12"
+
+"player gains XP from killing enemy":
+  confidence: 0.95
+  given:
+    currentXP: 10
+    enemyXP: 15
+  when:
+    - "player = createPlayer(5, 5, 50)"
+    - "withXP = setPlayerXP(player, currentXP)"
+    - "gainedXP = gainXP(withXP, enemyXP)"
+    - "newXP = getPlayerXP(gainedXP)"
+  then:
+    - "expect: newXP == 25"
+
+"player levels up at 100 XP":
+  confidence: 0.95
+  given:
+    xp: 100
+  when:
+    - "shouldLevel = shouldLevelUp(xp)"
+  then:
+    - "expect: shouldLevel == true"
+
+"player gets stronger on level up":
+  confidence: 0.95
+  given:
+    baseAttack: 15
+  when:
+    - "player = createPlayer(5, 5, 50)"
+    - "leveled = levelUpPlayer(player)"
+    - "newAttack = getEntityAttack(leveled)"
+    - "newMaxHP = getEntityHP(leveled)"
+  then:
+    - "expect: newAttack == 18"
+    - "expect: newMaxHP == 60"

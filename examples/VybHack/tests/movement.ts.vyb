@@ -1,0 +1,77 @@
+"moving north decreases Y coordinate":
+  confidence: 0.99
+  given:
+    currentY: 5
+  when:
+    - "newY = moveNorth(currentY)"
+  then:
+    - "expect: newY == 4"
+
+"moving south increases Y coordinate":
+  confidence: 0.99
+  given:
+    currentY: 5
+  when:
+    - "newY = moveSouth(currentY)"
+  then:
+    - "expect: newY == 6"
+
+"moving east increases X coordinate":
+  confidence: 0.99
+  given:
+    currentX: 5
+  when:
+    - "newX = moveEast(currentX)"
+  then:
+    - "expect: newX == 6"
+
+"moving west decreases X coordinate":
+  confidence: 0.99
+  given:
+    currentX: 5
+  when:
+    - "newX = moveWest(currentX)"
+  then:
+    - "expect: newX == 4"
+
+"wall tile blocks movement":
+  confidence: 0.99
+  given:
+    tileType: 1
+  when:
+    - "walkable = isWalkable(tileType)"
+  then:
+    - "expect: walkable == false"
+
+"floor tile allows movement":
+  confidence: 0.99
+  given:
+    tileType: 0
+  when:
+    - "walkable = isWalkable(tileType)"
+  then:
+    - "expect: walkable == true"
+
+"adjacent tiles have distance of 1":
+  confidence: 0.95
+  given:
+    x1: 5
+    y1: 5
+    x2: 6
+    y2: 5
+  when:
+    - "distance = calculateDistance(x1, y1, x2, y2)"
+  then:
+    - "expect: distance == 1"
+
+"diagonal distance calculation":
+  confidence: 0.90
+  given:
+    x1: 3
+    y1: 4
+    x2: 6
+    y2: 8
+  when:
+    - "distance = calculateDistance(x1, y1, x2, y2)"
+  then:
+    - "expect: distance == 5"

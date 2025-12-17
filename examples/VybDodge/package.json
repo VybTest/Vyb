@@ -1,0 +1,12 @@
+{
+  "name": "vybdodge",
+  "version": "1.0.0",
+  "description": "Simple canvas game to demo Vyb TDD testing",
+  "scripts": {
+    "build": "tsc",
+    "test": "cd ../.. && ./vyb.exe run examples/VybDodge/tests/"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,33 @@
+"position is within dungeon bounds":
+  confidence: 0.95
+  given:
+    x: 5
+    y: 5
+    width: 10
+    height: 10
+  when:
+    - "inBounds = isInBounds(x, y, width, height)"
+  then:
+    - "expect: inBounds == true"
+
+"position outside dungeon bounds":
+  confidence: 0.95
+  given:
+    x: 15
+    y: 5
+    width: 10
+    height: 10
+  when:
+    - "inBounds = isInBounds(x, y, width, height)"
+  then:
+    - "expect: inBounds == false"
+
+"calculate room area":
+  confidence: 0.99
+  given:
+    roomWidth: 5
+    roomHeight: 4
+  when:
+    - "area = calculateRoomArea(roomWidth, roomHeight)"
+  then:
+    - "expect: area == 20"

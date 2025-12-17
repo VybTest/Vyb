@@ -1,0 +1,69 @@
+"enemy moves toward player horizontally":
+  confidence: 0.95
+  given:
+    enemyX: 10
+    enemyY: 5
+    playerX: 5
+    playerY: 5
+  when:
+    - "enemy = createEnemy(enemyX, enemyY, 30, 10, 3)"
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "newX = getAIMoveX(enemy, player)"
+  then:
+    - "expect: newX == 9"
+
+"enemy moves toward player vertically":
+  confidence: 0.95
+  given:
+    enemyX: 5
+    enemyY: 10
+    playerX: 5
+    playerY: 5
+  when:
+    - "enemy = createEnemy(enemyX, enemyY, 30, 10, 3)"
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "newY = getAIMoveY(enemy, player)"
+  then:
+    - "expect: newY == 9"
+
+"enemy prioritizes horizontal movement when closer":
+  confidence: 0.90
+  given:
+    enemyX: 10
+    enemyY: 7
+    playerX: 5
+    playerY: 5
+  when:
+    - "enemy = createEnemy(enemyX, enemyY, 30, 10, 3)"
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "direction = getAIPrimaryDirection(enemy, player)"
+  then:
+    - "expect: direction == 0"
+
+"enemy stays put when adjacent to player":
+  confidence: 0.95
+  given:
+    enemyX: 6
+    enemyY: 5
+    playerX: 5
+    playerY: 5
+  when:
+    - "enemy = createEnemy(enemyX, enemyY, 30, 10, 3)"
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "adjacent = isAdjacentTo(enemy, player)"
+  then:
+    - "expect: adjacent == true"
+
+"calculates distance to player":
+  confidence: 0.95
+  given:
+    enemyX: 8
+    enemyY: 6
+    playerX: 5
+    playerY: 5
+  when:
+    - "enemy = createEnemy(enemyX, enemyY, 30, 10, 3)"
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "distance = getDistanceToPlayer(enemy, player)"
+  then:
+    - "expect: distance == 4"

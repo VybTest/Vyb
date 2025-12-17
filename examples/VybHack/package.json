@@ -1,0 +1,24 @@
+{
+  "name": "roguelike-vyb-example",
+  "version": "1.0.0",
+  "description": "Simple roguelike built with TDD using Vyb",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "test": "cd .. && ./vyb.exe run roguelike/tests/",
+    "test:watch": "cd .. && ./vyb.exe run roguelike/tests/ --watch",
+    "play": "npm run build && npm start"
+  },
+  "keywords": [
+    "roguelike",
+    "tdd",
+    "vyb"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.3.0"
+  }
+}

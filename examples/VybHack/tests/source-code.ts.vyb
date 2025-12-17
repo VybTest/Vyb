@@ -1,0 +1,37 @@
+"floor 10 has no ladder":
+  confidence: 0.95
+  given:
+    floor: 10
+  when:
+    - "state = createFloorState(floor)"
+    - "currentFloor = getFloorNumber(state)"
+  then:
+    - "expect: currentFloor == 10"
+
+"source code item can be created":
+  confidence: 0.99
+  given:
+    x: 10
+    y: 10
+    healAmount: 0
+  when:
+    - "item = createHealthPotion(x, y, healAmount)"
+    - "itemX = getItemX(item)"
+    - "itemY = getItemY(item)"
+  then:
+    - "expect: itemX == 10"
+    - "expect: itemY == 10"
+
+"player can pick up source code":
+  confidence: 0.95
+  given:
+    playerX: 10
+    playerY: 10
+    itemX: 10
+    itemY: 10
+  when:
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "item = createHealthPotion(itemX, itemY, 0)"
+    - "canPickup = canPickupItem(player, item)"
+  then:
+    - "expect: canPickup == true"

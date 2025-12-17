@@ -1,0 +1,49 @@
+"player takes damage correctly":
+  confidence: 0.99
+  given:
+    currentHP: 100
+    damageAmount: 25
+  when:
+    - "newHP = takeDamage(currentHP, damageAmount)"
+  then:
+    - "expect: newHP == 75"
+
+"player dies when HP reaches zero":
+  confidence: 1.0
+  given:
+    hp: 0
+  when:
+    - "alive = isAlive(hp)"
+  then:
+    - "expect: alive == false"
+
+"player is alive with positive HP":
+  confidence: 1.0
+  given:
+    hp: 50
+  when:
+    - "alive = isAlive(hp)"
+  then:
+    - "expect: alive == true"
+
+"healing restores HP up to max":
+  confidence: 0.95
+  given:
+    currentHP: 80
+    healAmount: 30
+    maxHP: 100
+  when:
+    - "newHP = heal(currentHP, healAmount, maxHP)"
+  then:
+    - "expect: newHP == 100"
+
+"healing works normally below max HP":
+  confidence: 0.95
+  given:
+    currentHP: 40
+    healAmount: 20
+    maxHP: 100
+  when:
+    - "newHP = heal(currentHP, healAmount, maxHP)"
+  then:
+    - "expect: newHP == 60"

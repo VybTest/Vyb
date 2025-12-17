@@ -1,0 +1,60 @@
+# Binaries
+/vyb.exe
+/vyb
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+
+# Build output
+/dist/
+/build/
+
+# Go
+/vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node.js (for examples)
+node_modules/
+package-lock.json
+
+# Python (for examples)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+.eggs/
+venv/
+.venv/
+
+# Lua (for examples)
+*.luac
+
+# Test artifacts
+*.log
+/tmp/
+/coverage/
+
+# Local config
+.env
+.env.local
+*.local
+
+# npm package artifacts
+/npm/bin/vyb
+/npm/bin/vyb.exe
+/npm/tmp/
+/npm/checksums.txt

@@ -1,0 +1,83 @@
+# Game State Tests - Space Dodge
+# TDD: Writing tests before implementation
+
+"creates game with initial state":
+  confidence: 0.99
+  when:
+    - "game = createGame(800, 600)"
+  then:
+    - "expect: game.score == 0"
+    - "expect: game.lives == 3"
+    - "expect: game.gameOver == false"
+    - "expect: game.width == 800"
+    - "expect: game.height == 600"
+
+"score increases when asteroid passes":
+  confidence: 0.95
+  when:
+    - "game = createGame(800, 600)"
+    - "updated = addScore(game, 10)"
+  then:
+    - "expect: updated.score == 10"
+
+"loses life on collision":
+  confidence: 0.95
+  when:
+    - "game = createGame(800, 600)"
+    - "hit = loseLife(game)"
+  then:
+    - "expect: hit.lives == 2"
+
+"game over when no lives remain":
+  confidence: 0.99
+  when:
+    - "game = createGame(800, 600)"
+    - "hit1 = loseLife(game)"
+    - "hit2 = loseLife(hit1)"
+    - "hit3 = loseLife(hit2)"
+  then:
+    - "expect: hit3.lives == 0"
+    - "expect: hit3.gameOver == true"
+
+"spawns asteroid at top of screen":
+  confidence: 0.95
+  given:
+    spawnX: 400
+  when:
+    - "asteroid = createAsteroid(spawnX, 0)"
+  then:
+    - "expect: asteroid.x == 400"
+    - "expect: asteroid.y == 0"
+    - "expect: asteroid.width == 30"
+    - "expect: asteroid.height == 30"
+
+"asteroid moves down":
+  confidence: 0.95
+  given:
+    speed: 200
+    dt: 0.016
+  when:
+    - "asteroid = createAsteroid(400, 0)"
+    - "moved = moveAsteroid(asteroid, dt)"
+  then:
+    - "expect: moved.y > 0"
+
+"asteroid is off screen when past bottom":
+  confidence: 0.95
+  given:
+    screenHeight: 600
+  when:
+    - "asteroid = createAsteroid(400, 650)"
+    - "offScreen = isOffScreen(asteroid, screenHeight)"
+  then:
+    - "expect: offScreen == true"
+
+"asteroid on screen when visible":
+  confidence: 0.95
+  given:
+    screenHeight: 600
+  when:
+    - "asteroid = createAsteroid(400, 300)"
+    - "offScreen = isOffScreen(asteroid, screenHeight)"
+  then:
+    - "expect: offScreen == false"

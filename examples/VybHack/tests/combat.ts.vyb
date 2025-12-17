@@ -1,0 +1,39 @@
+"calculates basic combat damage":
+  confidence: 0.99
+  given:
+    attackPower: 20
+    defensePower: 5
+  when:
+    - "damage = calculateDamage(attackPower, defensePower)"
+  then:
+    - "expect: damage == 15"
+
+"minimum damage is 1 when defense exceeds attack":
+  confidence: 0.99
+  given:
+    weakAttack: 3
+    strongDefense: 10
+  when:
+    - "damage = calculateDamage(weakAttack, strongDefense)"
+  then:
+    - "expect: damage == 1"
+
+"critical hit doubles damage":
+  confidence: 0.95
+  given:
+    baseDamage: 15
+    isCritical: true
+  when:
+    - "finalDamage = applyCritical(baseDamage, isCritical)"
+  then:
+    - "expect: finalDamage == 30"
+
+"normal hit keeps damage unchanged":
+  confidence: 0.95
+  given:
+    baseDamage: 15
+    isCritical: false
+  when:
+    - "finalDamage = applyCritical(baseDamage, isCritical)"
+  then:
+    - "expect: finalDamage == 15"

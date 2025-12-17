@@ -1,0 +1,56 @@
+{
+  "shell_cmd": "vyb run \"$file\"",
+  "working_dir": "${file_path}/..",
+  "selector": "source.vyb",
+
+  "variants": [
+    {
+      "name": "Run All Tests",
+      "shell_cmd": "vyb run tests/"
+    },
+    {
+      "name": "Run with Suggestions (AI mode)",
+      "shell_cmd": "vyb run --suggest \"$file\""
+    },
+    {
+      "name": "Run All Tests (Watch)",
+      "shell_cmd": "vyb run --watch tests/"
+    }
+  ],
+
+  "windows": {
+    "shell_cmd": "vyb.exe run \"$file\"",
+    "variants": [
+      {
+        "name": "Run All Tests",
+        "shell_cmd": "vyb.exe run tests/"
+      },
+      {
+        "name": "Run with Suggestions (AI mode)",
+        "shell_cmd": "vyb.exe run --suggest \"$file\""
+      },
+      {
+        "name": "Run All Tests (Watch)",
+        "shell_cmd": "vyb.exe run --watch tests/"
+      }
+    ]
+  },
+
+  "linux": {
+    "shell_cmd": "./vyb run \"$file\"",
+    "variants": [
+      {
+        "name": "Run All Tests",
+        "shell_cmd": "./vyb run tests/"
+      },
+      {
+        "name": "Run with Suggestions (AI mode)",
+        "shell_cmd": "./vyb run --suggest \"$file\""
+      },
+      {
+        "name": "Run All Tests (Watch)",
+        "shell_cmd": "./vyb run --watch tests/"
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+"adding item increases inventory count":
+  confidence: 0.95
+  given:
+    currentCount: 3
+  when:
+    - "newCount = addItem(currentCount)"
+  then:
+    - "expect: newCount == 4"
+
+"removing item decreases inventory count":
+  confidence: 0.95
+  given:
+    currentCount: 4
+  when:
+    - "newCount = removeItem(currentCount)"
+  then:
+    - "expect: newCount == 3"
+
+"inventory is full at max capacity":
+  confidence: 0.95
+  given:
+    currentCount: 10
+    maxCapacity: 10
+  when:
+    - "full = isInventoryFull(currentCount, maxCapacity)"
+  then:
+    - "expect: full == true"
+
+"inventory has space below max capacity":
+  confidence: 0.95
+  given:
+    currentCount: 7
+    maxCapacity: 10
+  when:
+    - "full = isInventoryFull(currentCount, maxCapacity)"
+  then:
+    - "expect: full == false"

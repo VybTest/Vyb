@@ -1,0 +1,41 @@
+# Collision Tests - Space Dodge
+# TDD: Writing tests before implementation
+
+"detects collision between overlapping rectangles":
+  confidence: 0.99
+  when:
+    - "result = checkCollision(0, 0, 40, 40, 20, 20, 40, 40)"
+  then:
+    - "expect: result == true"
+
+"no collision when rectangles are separated":
+  confidence: 0.99
+  when:
+    - "result = checkCollision(0, 0, 40, 40, 100, 100, 40, 40)"
+  then:
+    - "expect: result == false"
+
+"detects edge collision":
+  confidence: 0.95
+  when:
+    - "result = checkCollision(0, 0, 40, 40, 40, 0, 40, 40)"
+  then:
+    - "expect: result == true"
+
+"player collides with asteroid":
+  confidence: 0.95
+  when:
+    - "player = createPlayer(100, 100)"
+    - "asteroid = createAsteroid(110, 110)"
+    - "hit = entityCollision(player, asteroid)"
+  then:
+    - "expect: hit == true"
+
+"player avoids asteroid":
+  confidence: 0.95
+  when:
+    - "player = createPlayer(100, 100)"
+    - "asteroid = createAsteroid(300, 300)"
+    - "hit = entityCollision(player, asteroid)"
+  then:
+    - "expect: hit == false"

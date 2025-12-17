@@ -1,0 +1,128 @@
+"creates a room with valid bounds":
+  confidence: 0.99
+  given:
+    x: 5
+    y: 5
+    width: 8
+    height: 6
+  when:
+    - "room = createRoom(x, y, width, height)"
+    - "roomX = getRoomX(room)"
+    - "roomY = getRoomY(room)"
+    - "roomWidth = getRoomWidth(room)"
+    - "roomHeight = getRoomHeight(room)"
+  then:
+    - "expect: roomX == 5"
+    - "expect: roomY == 5"
+    - "expect: roomWidth == 8"
+    - "expect: roomHeight == 6"
+
+"calculates room center point":
+  confidence: 0.95
+  given:
+    x: 10
+    y: 10
+    width: 8
+    height: 6
+  when:
+    - "room = createRoom(x, y, width, height)"
+    - "centerX = getRoomCenterX(room)"
+    - "centerY = getRoomCenterY(room)"
+  then:
+    - "expect: centerX == 14"
+    - "expect: centerY == 13"
+
+"checks if point is inside room":
+  confidence: 0.95
+  given:
+    roomX: 5
+    roomY: 5
+    width: 8
+    height: 6
+    pointX: 7
+    pointY: 7
+  when:
+    - "room = createRoom(roomX, roomY, width, height)"
+    - "inside = isPointInRoom(room, pointX, pointY)"
+  then:
+    - "expect: inside == true"
+
+"point outside room returns false":
+  confidence: 0.95
+  given:
+    roomX: 5
+    roomY: 5
+    width: 8
+    height: 6
+    pointX: 2
+    pointY: 2
+  when:
+    - "room = createRoom(roomX, roomY, width, height)"
+    - "inside = isPointInRoom(room, pointX, pointY)"
+  then:
+    - "expect: inside == false"
+
+"checks if two rooms overlap":
+  confidence: 0.90
+  given:
+    room1X: 5
+    room1Y: 5
+    room2X: 10
+    room2Y: 10
+    roomWidth: 8
+    roomHeight: 6
+  when:
+    - "room1 = createRoom(room1X, room1Y, roomWidth, roomHeight)"
+    - "room2 = createRoom(room2X, room2Y, roomWidth, roomHeight)"
+    - "overlap = doRoomsOverlap(room1, room2)"
+  then:
+    - "expect: overlap == true"
+
+"non-overlapping rooms return false":
+  confidence: 0.90
+  given:
+    room1X: 5
+    room1Y: 5
+    room2X: 20
+    room2Y: 20
+    roomWidth: 6
+    roomHeight: 5
+  when:
+    - "room1 = createRoom(room1X, room1Y, roomWidth, roomHeight)"
+    - "room2 = createRoom(room2X, room2Y, roomWidth, roomHeight)"
+    - "overlap = doRoomsOverlap(room1, room2)"
+  then:
+    - "expect: overlap == false"
+
+"creates horizontal corridor between points":
+  confidence: 0.95
+  given:
+    x1: 5
+    x2: 15
+    y: 10
+  when:
+    - "corridor = createHorizontalCorridor(x1, x2, y)"
+    - "corridorY = getCorridorY(corridor)"
+    - "corridorStart = getCorridorStartX(corridor)"
+    - "corridorEnd = getCorridorEndX(corridor)"
+  then:
+    - "expect: corridorY == 10"
+    - "expect: corridorStart == 5"
+    - "expect: corridorEnd == 15"
+
+"creates vertical corridor between points":
+  confidence: 0.95
+  given:
+    y1: 5
+    y2: 15
+    x: 10
+  when:
+    - "corridor = createVerticalCorridor(y1, y2, x)"
+    - "corridorX = getCorridorX(corridor)"
+    - "corridorStart = getCorridorStartY(corridor)"
+    - "corridorEnd = getCorridorEndY(corridor)"
+  then:
+    - "expect: corridorX == 10"
+    - "expect: corridorStart == 5"
+    - "expect: corridorEnd == 15"
+

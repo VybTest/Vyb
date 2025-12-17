@@ -1,0 +1,91 @@
+"player attacks enemy and deals damage":
+  confidence: 0.95
+  given:
+    playerAtk: 20
+    enemyDef: 5
+    enemyHP: 50
+  when:
+    - "player = createPlayer(5, 5, 100)"
+    - "enemy = createEnemy(6, 5, enemyHP, 10, enemyDef)"
+    - "damage = calculateDamage(playerAtk, enemyDef)"
+    - "damagedEnemy = applyDamageToEntity(enemy, damage)"
+    - "newHP = getEntityHP(damagedEnemy)"
+  then:
+    - "expect: damage == 15"
+    - "expect: newHP == 35"
+
+"enemy attacks player":
+  confidence: 0.95
+  given:
+    enemyAtk: 15
+    playerDef: 5
+    playerHP: 100
+  when:
+    - "player = createPlayer(5, 5, playerHP)"
+    - "enemy = createEnemy(6, 5, 50, enemyAtk, 5)"
+    - "damage = calculateDamage(enemyAtk, playerDef)"
+    - "damagedPlayer = applyDamageToEntity(player, damage)"
+    - "newHP = getEntityHP(damagedPlayer)"
+  then:
+    - "expect: damage == 10"
+    - "expect: newHP == 90"
+
+"critical hit doubles damage to enemy":
+  confidence: 0.90
+  given:
+    baseDamage: 15
+    isCrit: true
+    enemyHP: 50
+  when:
+    - "enemy = createEnemy(6, 5, enemyHP, 10, 5)"
+    - "finalDamage = applyCritical(baseDamage, isCrit)"
+    - "damagedEnemy = applyDamageToEntity(enemy, finalDamage)"
+    - "newHP = getEntityHP(damagedEnemy)"
+  then:
+    - "expect: finalDamage == 30"
+    - "expect: newHP == 20"
+
+"enemy dies when HP depleted":
+  confidence: 0.95
+  given:
+    playerAtk: 60
+    enemyDef: 10
+    enemyHP: 50
+  when:
+    - "enemy = createEnemy(6, 5, enemyHP, 10, enemyDef)"
+    - "damage = calculateDamage(playerAtk, enemyDef)"
+    - "deadEnemy = applyDamageToEntity(enemy, damage)"
+    - "alive = isEntityAlive(deadEnemy)"
+  then:
+    - "expect: damage == 50"
+    - "expect: alive == false"
+
+"player is healed":
+  confidence: 0.95
+  given:
+    currentHP: 60
+    healAmount: 30
+    maxHP: 100
+  when:
+    - "player = createPlayer(5, 5, maxHP)"
+    - "damaged = applyDamageToEntity(player, 40)"
+    - "damagedHP = getEntityHP(damaged)"
+    - "healed = healEntity(damaged, healAmount, maxHP)"
+    - "healedHP = getEntityHP(healed)"
+  then:
+    - "expect: damagedHP == 60"
+    - "expect: healedHP == 90"
+
+"healing caps at max HP":
+  confidence: 0.95
+  given:
+    currentHP: 80
+    healAmount: 50
+    maxHP: 100
+  when:
+    - "player = createPlayer(5, 5, maxHP)"
+    - "damaged = applyDamageToEntity(player, 20)"
+    - "healed = healEntity(damaged, healAmount, maxHP)"
+    - "healedHP = getEntityHP(healed)"
+  then:
+    - "expect: healedHP == 100"

@@ -1,0 +1,34 @@
+{
+  "name": "vyb",
+  "version": "0.0.0",
+  "description": "AI-Native Testing Framework - Write tests in YAML, get structured output for autonomous TDD",
+  "keywords": [
+    "testing",
+    "tdd",
+    "ai",
+    "yaml",
+    "test-driven-development",
+    "autonomous",
+    "claude",
+    "ai-native"
+  ],
+  "homepage": "https://vybtest.com",
+  "bugs": {
+    "url": "https://github.com/VybTest/Vyb/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VybTest/Vyb.git"
+  },
+  "license": "MIT",
+  "author": "VybTest",
+  "bin": {
+    "vyb": "bin/vyb"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install.js"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

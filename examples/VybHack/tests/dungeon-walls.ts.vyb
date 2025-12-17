@@ -1,0 +1,27 @@
+"game starts with all walls except borders":
+  confidence: 0.95
+  given:
+    width: 20
+    height: 15
+    playerX: 10
+    playerY: 7
+  when:
+    - "game = createGame(width, height, playerX, playerY)"
+    - "wallTile = getTileAt(game, 5, 5)"
+  then:
+    - "expect: wallTile == 1"
+
+"cannot move through uncarved walls":
+  confidence: 0.95
+  given:
+    width: 20
+    height: 15
+    playerX: 10
+    playerY: 7
+    wallX: 5
+    wallY: 5
+  when:
+    - "game = createGame(width, height, playerX, playerY)"
+    - "canMove = canPlayerMove(game, wallX, wallY)"
+  then:
+    - "expect: canMove == false"

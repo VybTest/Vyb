@@ -1,0 +1,91 @@
+"tile starts unexplored":
+  confidence: 0.99
+  given:
+    x: 5
+    y: 5
+  when:
+    - "fogMap = createFogMap(20, 15)"
+    - "explored = isTileExplored(fogMap, x, y)"
+  then:
+    - "expect: explored == false"
+
+"reveals tile sets it as explored":
+  confidence: 0.99
+  given:
+    x: 5
+    y: 5
+  when:
+    - "fogMap = createFogMap(20, 15)"
+    - "revealed = revealTile(fogMap, x, y)"
+    - "explored = isTileExplored(revealed, x, y)"
+  then:
+    - "expect: explored == true"
+
+"reveals room area":
+  confidence: 0.95
+  given:
+    roomX: 5
+    roomY: 5
+    roomWidth: 8
+    roomHeight: 6
+    checkX: 7
+    checkY: 7
+  when:
+    - "fogMap = createFogMap(30, 20)"
+    - "room = createRoom(roomX, roomY, roomWidth, roomHeight)"
+    - "revealed = revealRoom(fogMap, room)"
+    - "tileExplored = isTileExplored(revealed, checkX, checkY)"
+  then:
+    - "expect: tileExplored == true"
+
+"tile outside revealed room stays unexplored":
+  confidence: 0.95
+  given:
+    roomX: 5
+    roomY: 5
+    roomWidth: 8
+    roomHeight: 6
+    outsideX: 2
+    outsideY: 2
+  when:
+    - "fogMap = createFogMap(30, 20)"
+    - "room = createRoom(roomX, roomY, roomWidth, roomHeight)"
+    - "revealed = revealRoom(fogMap, room)"
+    - "tileExplored = isTileExplored(revealed, outsideX, outsideY)"
+  then:
+    - "expect: tileExplored == false"
+
+"reveals corridor tiles":
+  confidence: 0.95
+  given:
+    x1: 5
+    x2: 15
+    y: 10
+    checkX: 10
+  when:
+    - "fogMap = createFogMap(30, 20)"
+    - "corridor = createHorizontalCorridor(x1, x2, y)"
+    - "revealed = revealCorridor(fogMap, corridor)"
+    - "tileExplored = isTileExplored(revealed, checkX, y)"
+  then:
+    - "expect: tileExplored == true"
+
+"gets current room player is in":
+  confidence: 0.90
+  given:
+    playerX: 7
+    playerY: 7
+    room1X: 5
+    room1Y: 5
+    room2X: 15
+    room2Y: 15
+    width: 8
+    height: 6
+  when:
+    - "room1 = createRoom(room1X, room1Y, width, height)"
+    - "room2 = createRoom(room2X, room2Y, width, height)"
+    - "inRoom1 = isPointInRoom(room1, playerX, playerY)"
+    - "inRoom2 = isPointInRoom(room2, playerX, playerY)"
+  then:
+    - "expect: inRoom1 == true"
+    - "expect: inRoom2 == false"

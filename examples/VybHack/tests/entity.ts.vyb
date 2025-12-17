@@ -1,0 +1,109 @@
+"creates player entity with starting stats":
+  confidence: 0.99
+  given:
+    x: 5
+    y: 5
+    maxHP: 100
+  when:
+    - "player = createPlayer(x, y, maxHP)"
+    - "playerHP = getEntityHP(player)"
+    - "playerX = getEntityX(player)"
+    - "playerY = getEntityY(player)"
+  then:
+    - "expect: playerHP == 100"
+    - "expect: playerX == 5"
+    - "expect: playerY == 5"
+
+"creates enemy with stats":
+  confidence: 0.99
+  given:
+    x: 10
+    y: 10
+    hp: 50
+    attack: 15
+    defense: 5
+  when:
+    - "enemy = createEnemy(x, y, hp, attack, defense)"
+    - "enemyHP = getEntityHP(enemy)"
+    - "enemyAttack = getEntityAttack(enemy)"
+    - "enemyDefense = getEntityDefense(enemy)"
+  then:
+    - "expect: enemyHP == 50"
+    - "expect: enemyAttack == 15"
+    - "expect: enemyDefense == 5"
+
+"moves entity to new position":
+  confidence: 0.99
+  given:
+    x: 5
+    y: 5
+    newX: 6
+    newY: 5
+  when:
+    - "entity = createPlayer(x, y, 100)"
+    - "moved = moveEntity(entity, newX, newY)"
+    - "movedX = getEntityX(moved)"
+    - "movedY = getEntityY(moved)"
+  then:
+    - "expect: movedX == 6"
+    - "expect: movedY == 5"
+
+"checks if position is occupied by entity":
+  confidence: 0.95
+  given:
+    entityX: 5
+    entityY: 5
+    checkX: 5
+    checkY: 5
+  when:
+    - "entity = createPlayer(entityX, entityY, 100)"
+    - "occupied = isPositionOccupied(entity, checkX, checkY)"
+  then:
+    - "expect: occupied == true"
+
+"position not occupied when coordinates differ":
+  confidence: 0.95
+  given:
+    entityX: 5
+    entityY: 5
+    checkX: 6
+    checkY: 5
+  when:
+    - "entity = createPlayer(entityX, entityY, 100)"
+    - "occupied = isPositionOccupied(entity, checkX, checkY)"
+  then:
+    - "expect: occupied == false"
+
+"applies damage to entity":
+  confidence: 0.99
+  given:
+    startHP: 100
+    damage: 25
+  when:
+    - "entity = createPlayer(5, 5, startHP)"
+    - "damaged = applyDamageToEntity(entity, damage)"
+    - "newHP = getEntityHP(damaged)"
+  then:
+    - "expect: newHP == 75"
+
+"entity dies when HP reaches zero":
+  confidence: 0.99
+  given:
+    hp: 0
+  when:
+    - "entity = createPlayer(5, 5, 100)"
+    - "dead = applyDamageToEntity(entity, 100)"
+    - "alive = isEntityAlive(dead)"
+  then:
+    - "expect: alive == false"
+
+"entity is alive with positive HP":
+  confidence: 0.99
+  given:
+    hp: 50
+  when:
+    - "entity = createPlayer(5, 5, 100)"
+    - "damaged = applyDamageToEntity(entity, 50)"
+    - "alive = isEntityAlive(damaged)"
+  then:
+    - "expect: alive == true"

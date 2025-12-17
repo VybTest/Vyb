@@ -1,0 +1,65 @@
+# Player Tests - Space Dodge
+# TDD: Writing tests before implementation
+
+"creates player at starting position":
+  confidence: 0.99
+  when:
+    - "player = createPlayer(400, 500)"
+  then:
+    - "expect: player.x == 400"
+    - "expect: player.y == 500"
+    - "expect: player.width == 40"
+    - "expect: player.height == 40"
+
+"player moves left":
+  confidence: 0.95
+  given:
+    startX: 400
+    speed: 300
+    dt: 0.016
+  when:
+    - "player = createPlayer(startX, 500)"
+    - "moved = movePlayer(player, -1, dt)"
+  then:
+    - "expect: moved.x < 400"
+
+"player moves right":
+  confidence: 0.95
+  given:
+    startX: 400
+    speed: 300
+    dt: 0.016
+  when:
+    - "player = createPlayer(startX, 500)"
+    - "moved = movePlayer(player, 1, dt)"
+  then:
+    - "expect: moved.x > 400"
+
+"player cannot move past left boundary":
+  confidence: 0.95
+  given:
+    screenWidth: 800
+  when:
+    - "player = createPlayer(0, 500)"
+    - "moved = movePlayer(player, -1, 0.1)"
+    - "clamped = clampToScreen(moved, screenWidth)"
+  then:
+    - "expect: clamped.x >= 0"
+
+"player cannot move past right boundary":
+  confidence: 0.95
+  given:
+    screenWidth: 800
+  when:
+    - "player = createPlayer(760, 500)"
+    - "moved = movePlayer(player, 1, 0.1)"
+    - "clamped = clampToScreen(moved, screenWidth)"
+  then:
+    - "expect: clamped.x <= 760"
+
+"player has default speed":
+  confidence: 0.99
+  when:
+    - "player = createPlayer(400, 500)"
+  then:
+    - "expect: player.speed == 300"

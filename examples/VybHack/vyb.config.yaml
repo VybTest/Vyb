@@ -1,0 +1,13 @@
+runtime: node
+modules:
+  - ./dist/combat.js
+  - ./dist/player.js
+  - ./dist/inventory.js
+  - ./dist/dungeon.js
+  - ./dist/entity.js
+  - ./dist/game.js
+  - ./dist/dungeon-gen.js
+  - ./dist/fog-of-war.js
+  - ./dist/enemy-ai.js
+  - ./dist/items.js
+  - ./dist/progression.js

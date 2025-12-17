@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VybDodge - Vyb Demo Game</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: 'Segoe UI', sans-serif;
+      color: #eee;
+    }
+    h1 {
+      margin-bottom: 10px;
+      color: #00d4ff;
+    }
+    .info {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    canvas {
+      border: 2px solid #00d4ff;
+      border-radius: 8px;
+    }
+    .controls {
+      margin-top: 15px;
+      color: #888;
+    }
+    .stats {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    .stat { color: #00d4ff; }
+  </style>
+</head>
+<body>
+  <h1>VybDodge</h1>
+  <div class="info">A simple game built with TDD using Vyb</div>
+  <div class="stats">
+    <div>Score: <span id="score" class="stat">0</span></div>
+    <div>Lives: <span id="lives" class="stat">3</span></div>
+  </div>
+  <canvas id="game" width="800" height="600"></canvas>
+  <div class="controls">Arrow keys or A/D to move | Space to restart</div>
+
+  <script>
+    // Game logic (same as tested TypeScript, inlined for browser)
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const livesEl = document.getElementById('lives');
+
+    // Player
+    function createPlayer(x, y) {
+      return { x, y, width: 40, height: 40, speed: 300 };
+    }
+
+    function movePlayer(player, direction, dt) {
+      return { ...player, x: player.x + (direction * player.speed * dt) };
+    }
+
+    function clampToScreen(player, screenWidth) {
+      const minX = 0;
+      const maxX = screenWidth - player.width;
+      return { ...player, x: Math.max(minX, Math.min(maxX, player.x)) };
+    }
+
+    // Collision
+    function checkCollision(x1, y1, w1, h1, x2, y2, w2, h2) {
+      return x1 < x2 + w2 && x1 + w1 >= x2 && y1 < y2 + h2 && y1 + h1 >= y2;
+    }
+
+    function entityCollision(a, b) {
+      return checkCollision(a.x, a.y, a.width, a.height, b.x, b.y, b.width, b.height);
+    }
+
+    // Asteroid
+    function createAsteroid(x, y) {
+      return { x, y, width: 30, height: 30, speed: 150 + Math.random() * 100 };
+    }
+
+    function moveAsteroid(asteroid, dt) {
+      return { ...asteroid, y: asteroid.y + (asteroid.speed * dt) };
+    }
+
+    function isOffScreen(asteroid, screenHeight) {
+      return asteroid.y > screenHeight;
+    }
+
+    // Game state
+    function createGame(width, height) {
+      return { score: 0, lives: 3, gameOver: false, width, height };
+    }
+
+    function addScore(game, points) {
+      return { ...game, score: game.score + points };
+    }
+
+    function loseLife(game) {
+      const newLives = game.lives - 1;
+      return { ...game, lives: newLives, gameOver: newLives <= 0 };
+    }
+
+    // Game loop
+    let player = createPlayer(380, 520);
+    let game = createGame(800, 600);
+    let asteroids = [];
+    let lastTime = 0;
+    let spawnTimer = 0;
+    let input = { left: false, right: false };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a') input.left = true;
+      if (e.key === 'ArrowRight' || e.key === 'd') input.right = true;
+      if (e.key === ' ') {
+        e.preventDefault(); // Prevent page scroll
+        if (game.gameOver) {
+          player = createPlayer(380, 520);
+          game = createGame(800, 600);
+          asteroids = [];
+        }
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a') input.left = false;
+      if (e.key === 'ArrowRight' || e.key === 'd') input.right = false;
+    });
+
+    function update(dt) {
+      if (game.gameOver) return;
+
+      // Move player
+      let direction = 0;
+      if (input.left) direction = -1;
+      if (input.right) direction = 1;
+      player = movePlayer(player, direction, dt);
+      player = clampToScreen(player, game.width);
+
+      // Spawn asteroids
+      spawnTimer += dt;
+      if (spawnTimer > 0.8) {
+        spawnTimer = 0;
+        const x = Math.random() * (game.width - 30);
+        asteroids.push(createAsteroid(x, -30));
+      }
+
+      // Update asteroids
+      asteroids = asteroids.map(a => moveAsteroid(a, dt));
+
+      // Check collisions
+      for (const asteroid of asteroids) {
+        if (entityCollision(player, asteroid)) {
+          game = loseLife(game);
+          asteroids = asteroids.filter(a => a !== asteroid);
+          break;
+        }
+      }
+
+      // Remove off-screen asteroids and score
+      const before = asteroids.length;
+      asteroids = asteroids.filter(a => !isOffScreen(a, game.height));
+      const dodged = before - asteroids.length;
+      if (dodged > 0) {
+        game = addScore(game, dodged * 10);
+      }
+
+      // Update UI
+      scoreEl.textContent = game.score;
+      livesEl.textContent = game.lives;
+    }
+
+    function draw() {
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw player (spaceship)
+      ctx.fillStyle = '#00d4ff';
+      ctx.beginPath();
+      ctx.moveTo(player.x + player.width / 2, player.y);
+      ctx.lineTo(player.x, player.y + player.height);
+      ctx.lineTo(player.x + player.width, player.y + player.height);
+      ctx.closePath();
+      ctx.fill();
+
+      // Draw asteroids
+      ctx.fillStyle = '#ff6b6b';
+      for (const asteroid of asteroids) {
+        ctx.beginPath();
+        ctx.arc(
+          asteroid.x + asteroid.width / 2,
+          asteroid.y + asteroid.height / 2,
+          asteroid.width / 2,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      }
+
+      // Game over
+      if (game.gameOver) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = '48px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 20);
+        ctx.fillStyle = '#00d4ff';
+        ctx.font = '24px Segoe UI';
+        ctx.fillText(`Final Score: ${game.score}`, canvas.width / 2, canvas.height / 2 + 30);
+        ctx.fillStyle = '#888';
+        ctx.font = '18px Segoe UI';
+        ctx.fillText('Press SPACE to restart', canvas.width / 2, canvas.height / 2 + 70);
+      }
+    }
+
+    function gameLoop(timestamp) {
+      const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
+      lastTime = timestamp;
+
+      update(dt);
+      draw();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

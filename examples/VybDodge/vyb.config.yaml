@@ -1,0 +1,5 @@
+runtime: node
+modules:
+  - ./dist/player.js
+  - ./dist/collision.js
+  - ./dist/game.js

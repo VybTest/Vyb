@@ -1,0 +1,85 @@
+"creates health potion item":
+  confidence: 0.99
+  given:
+    x: 10
+    y: 10
+    healAmount: 20
+  when:
+    - "item = createHealthPotion(x, y, healAmount)"
+    - "itemX = getItemX(item)"
+    - "itemY = getItemY(item)"
+    - "healing = getItemHealAmount(item)"
+  then:
+    - "expect: itemX == 10"
+    - "expect: itemY == 10"
+    - "expect: healing == 20"
+
+"player picks up item at position":
+  confidence: 0.95
+  given:
+    playerX: 10
+    playerY: 10
+    itemX: 10
+    itemY: 10
+  when:
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "item = createHealthPotion(itemX, itemY, 20)"
+    - "canPickup = canPickupItem(player, item)"
+  then:
+    - "expect: canPickup == true"
+
+"cannot pickup item at different position":
+  confidence: 0.95
+  given:
+    playerX: 5
+    playerY: 5
+    itemX: 10
+    itemY: 10
+  when:
+    - "player = createPlayer(playerX, playerY, 50)"
+    - "item = createHealthPotion(itemX, itemY, 20)"
+    - "canPickup = canPickupItem(player, item)"
+  then:
+    - "expect: canPickup == false"
+
+"using health potion heals player":
+  confidence: 0.99
+  given:
+    currentHP: 30
+    maxHP: 50
+    healAmount: 20
+  when:
+    - "player = createPlayer(5, 5, maxHP)"
+    - "damaged = applyDamageToEntity(player, 20)"
+    - "item = createHealthPotion(5, 5, healAmount)"
+    - "healed = useHealthPotion(damaged, item)"
+    - "newHP = getEntityHP(healed)"
+  then:
+    - "expect: newHP == 50"
+
+"health potion caps at max HP":
+  confidence: 0.95
+  given:
+    currentHP: 45
+    maxHP: 50
+    healAmount: 20
+  when:
+    - "player = createPlayer(5, 5, maxHP)"
+    - "damaged = applyDamageToEntity(player, 5)"
+    - "item = createHealthPotion(5, 5, healAmount)"
+    - "healed = useHealthPotion(damaged, item)"
+    - "newHP = getEntityHP(healed)"
+  then:
+    - "expect: newHP == 50"
+
+"marks item as used after pickup":
+  confidence: 0.95
+  given:
+    x: 10
+    y: 10
+  when:
+    - "item = createHealthPotion(x, y, 20)"
+    - "used = markItemUsed(item)"
+    - "isUsed = isItemUsed(used)"
+  then:
+    - "expect: isUsed == true"

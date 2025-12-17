@@ -1,0 +1,569 @@
+{
+  "vyb_version": "0.1.0-alpha",
+  "schema_version": "1.0",
+  "description": "Vyb - AI-native testing framework. Machine-readable API reference for LLMs.",
+
+  "test_syntax": {
+    "description": "YAML-based test file format (.test.vyb extension)",
+
+    "recommended_format": {
+      "description": "Test name as YAML key (v0.2.0+)",
+      "syntax": "\"test name\":\n  confidence: 0.95\n  given:\n    var: value\n  when:\n    - \"statement\"\n  then:\n    - \"expectation\"",
+      "benefits": [
+        "No redundant 'test:' or 'name:' fields",
+        "Multiple tests per file",
+        "Cleaner and more concise",
+        "Less typing for LLMs"
+      ],
+      "example": "\"adds two numbers\":\n  confidence: 0.99\n  given:\n    a: 5\n    b: 3\n  when:\n    - \"sum = add(a, b)\"\n  then:\n    - \"expect: sum == 8\"\n\n\"multiplies numbers\":\n  given:\n    x: 4\n    y: 7\n  when:\n    - \"product = multiply(x, y)\"\n  then:\n    - \"expect: product == 28\""
+    },
+
+    "legacy_format": {
+      "description": "Original format (still supported for backward compatibility)",
+      "syntax": "test:\n  name: \"test name\"\n  confidence: 0.95\n  given:\n    var: value\n  when:\n    - \"statement\"\n  then:\n    - \"expectation\"",
+      "note": "Use recommended format above for new tests"
+    },
+
+    "structure": {
+      "test_object": {
+        "description": "Each test (whether as key or under 'test:' tag)",
+        "properties": {
+          "name": {
+            "type": "string",
+            "required": "only in legacy format (name is the key in recommended format)",
+            "description": "Descriptive name for the test",
+            "example": "calculates compound interest"
+          },
+          "confidence": {
+            "type": "float",
+            "required": false,
+            "default": 1.0,
+            "range": [0.0, 1.0],
+            "description": "Confidence level in test correctness (0.0 = no confidence, 1.0 = complete confidence)",
+            "example": 0.95
+          },
+          "given": {
+            "type": "object",
+            "required": false,
+            "description": "Setup phase - define initial variables",
+            "example": {"a": 5, "b": 3}
+          },
+          "when": {
+            "type": "array of strings",
+            "required": true,
+            "description": "Execution phase - run statements (variable = function(args))",
+            "example": ["result = add(a, b)", "doubled = multiply(result, 2)"]
+          },
+          "then": {
+            "type": "array of strings",
+            "required": true,
+            "description": "Assertion phase - verify expectations (expect: condition)",
+            "example": ["expect: result == 8", "expect: doubled > result"]
+          }
+        }
+      }
+    },
+    "complete_example_new_format": "\"adds two numbers\":\n  confidence: 0.95\n  given:\n    a: 2\n    b: 3\n  when:\n    - \"result = add(a, b)\"\n  then:\n    - \"expect: result == 5\"\n\n\"subtracts numbers\":\n  given:\n    a: 10\n    b: 3\n  when:\n    - \"result = subtract(a, b)\"\n  then:\n    - \"expect: result == 7\"",
+    "complete_example_legacy_format": "test:\n  name: \"adds two numbers\"\n  confidence: 0.95\n  given:\n    a: 2\n    b: 3\n  when:\n    - \"result = add(a, b)\"\n  then:\n    - \"expect: result == 5\""
+  },
+
+  "functions": {
+    "math": {
+      "add": {
+        "signature": "add(a: number, b: number) -> number",
+        "description": "Adds two numbers",
+        "params": [
+          {"name": "a", "type": "number", "description": "First addend"},
+          {"name": "b", "type": "number", "description": "Second addend"}
+        ],
+        "returns": {"type": "number", "description": "Sum of a and b"},
+        "example": "sum = add(5, 3)  # returns 8",
+        "errors": []
+      },
+      "subtract": {
+        "signature": "subtract(a: number, b: number) -> number",
+        "description": "Subtracts b from a",
+        "params": [
+          {"name": "a", "type": "number", "description": "Minuend"},
+          {"name": "b", "type": "number", "description": "Subtrahend"}
+        ],
+        "returns": {"type": "number", "description": "Difference (a - b)"},
+        "example": "diff = subtract(10, 4)  # returns 6",
+        "errors": []
+      },
+      "multiply": {
+        "signature": "multiply(a: number, b: number) -> number",
+        "description": "Multiplies two numbers",
+        "params": [
+          {"name": "a", "type": "number", "description": "First factor"},
+          {"name": "b", "type": "number", "description": "Second factor"}
+        ],
+        "returns": {"type": "number", "description": "Product of a and b"},
+        "example": "product = multiply(7, 6)  # returns 42",
+        "errors": []
+      },
+      "divide": {
+        "signature": "divide(a: number, b: number) -> number",
+        "description": "Divides a by b",
+        "params": [
+          {"name": "a", "type": "number", "description": "Dividend"},
+          {"name": "b", "type": "number", "description": "Divisor (cannot be zero)"}
+        ],
+        "returns": {"type": "number", "description": "Quotient (a / b)"},
+        "example": "quotient = divide(20, 4)  # returns 5",
+        "errors": ["division by zero - if b is 0"]
+      },
+      "power": {
+        "signature": "power(base: number, exponent: number) -> number",
+        "description": "Raises base to the power of exponent",
+        "params": [
+          {"name": "base", "type": "number", "description": "Base number"},
+          {"name": "exponent", "type": "number", "description": "Exponent"}
+        ],
+        "returns": {"type": "number", "description": "base^exponent"},
+        "example": "squared = power(5, 2)  # returns 25",
+        "errors": []
+      },
+      "sqrt": {
+        "signature": "sqrt(n: number) -> number",
+        "description": "Calculates square root of n",
+        "params": [
+          {"name": "n", "type": "number", "description": "Number to find square root of (must be >= 0)"}
+        ],
+        "returns": {"type": "number", "description": "Square root of n"},
+        "example": "root = sqrt(16)  # returns 4",
+        "errors": ["cannot be called with negative number"]
+      },
+      "abs": {
+        "signature": "abs(n: number) -> number",
+        "description": "Returns absolute value of n",
+        "params": [
+          {"name": "n", "type": "number", "description": "Number to get absolute value of"}
+        ],
+        "returns": {"type": "number", "description": "Absolute value of n"},
+        "example": "absolute = abs(-10)  # returns 10",
+        "errors": []
+      },
+      "min": {
+        "signature": "min(a: number, b: number) -> number",
+        "description": "Returns the smaller of two numbers",
+        "params": [
+          {"name": "a", "type": "number", "description": "First number"},
+          {"name": "b", "type": "number", "description": "Second number"}
+        ],
+        "returns": {"type": "number", "description": "Minimum of a and b"},
+        "example": "minimum = min(5, 10)  # returns 5",
+        "errors": []
+      },
+      "max": {
+        "signature": "max(a: number, b: number) -> number",
+        "description": "Returns the larger of two numbers",
+        "params": [
+          {"name": "a", "type": "number", "description": "First number"},
+          {"name": "b", "type": "number", "description": "Second number"}
+        ],
+        "returns": {"type": "number", "description": "Maximum of a and b"},
+        "example": "maximum = max(5, 10)  # returns 10",
+        "errors": []
+      }
+    },
+    "string": {
+      "concat": {
+        "signature": "concat(str1: any, str2: any, ...) -> string",
+        "description": "Concatenates multiple values into a string",
+        "params": [
+          {"name": "str1", "type": "any", "description": "First value to concatenate"},
+          {"name": "str2", "type": "any", "description": "Second value to concatenate"},
+          {"name": "...", "type": "any", "description": "Additional values (variadic)"}
+        ],
+        "returns": {"type": "string", "description": "Concatenated string"},
+        "example": "full = concat(\"Hello\", \" \", \"World\")  # returns \"Hello World\"",
+        "errors": []
+      },
+      "toUpper": {
+        "signature": "toUpper(str: any) -> string",
+        "description": "Converts string to uppercase",
+        "params": [
+          {"name": "str", "type": "any", "description": "String to convert (coerced to string if not)"}
+        ],
+        "returns": {"type": "string", "description": "Uppercase version of str"},
+        "example": "upper = toUpper(\"hello\")  # returns \"HELLO\"",
+        "errors": []
+      },
+      "toLower": {
+        "signature": "toLower(str: any) -> string",
+        "description": "Converts string to lowercase",
+        "params": [
+          {"name": "str", "type": "any", "description": "String to convert (coerced to string if not)"}
+        ],
+        "returns": {"type": "string", "description": "Lowercase version of str"},
+        "example": "lower = toLower(\"WORLD\")  # returns \"world\"",
+        "errors": []
+      }
+    },
+    "conversion": {
+      "celsiusToFahrenheit": {
+        "signature": "celsiusToFahrenheit(celsius: number) -> number",
+        "description": "Converts temperature from Celsius to Fahrenheit",
+        "params": [
+          {"name": "celsius", "type": "number", "description": "Temperature in Celsius"}
+        ],
+        "returns": {"type": "number", "description": "Temperature in Fahrenheit"},
+        "example": "temp = celsiusToFahrenheit(0)  # returns 32",
+        "formula": "F = (C × 9/5) + 32",
+        "errors": []
+      }
+    }
+  },
+
+  "assertions": {
+    "numeric_comparison": {
+      "==": {
+        "description": "Equal - checks if left equals right",
+        "syntax": "expect: value == expected",
+        "example": "expect: result == 5",
+        "types": "Works with numbers and strings"
+      },
+      "!=": {
+        "description": "Not equal - checks if left does not equal right",
+        "syntax": "expect: value != unwanted",
+        "example": "expect: result != 0",
+        "types": "Works with numbers and strings"
+      },
+      ">": {
+        "description": "Greater than - checks if left is greater than right",
+        "syntax": "expect: value > threshold",
+        "example": "expect: result > 10",
+        "types": "Numbers only"
+      },
+      "<": {
+        "description": "Less than - checks if left is less than right",
+        "syntax": "expect: value < maximum",
+        "example": "expect: result < 100",
+        "types": "Numbers only"
+      },
+      ">=": {
+        "description": "Greater than or equal - checks if left >= right",
+        "syntax": "expect: value >= minimum",
+        "example": "expect: result >= 0",
+        "types": "Numbers only"
+      },
+      "<=": {
+        "description": "Less than or equal - checks if left <= right",
+        "syntax": "expect: value <= maximum",
+        "example": "expect: result <= 100",
+        "types": "Numbers only"
+      }
+    },
+    "string_matching": {
+      "contains": {
+        "description": "Checks if string contains substring",
+        "syntax": "expect: text contains substring",
+        "example": "expect: message contains \"error\"",
+        "types": "Strings only"
+      },
+      "startsWith": {
+        "description": "Checks if string starts with prefix",
+        "syntax": "expect: text startsWith prefix",
+        "example": "expect: url startsWith \"https://\"",
+        "types": "Strings only"
+      },
+      "endsWith": {
+        "description": "Checks if string ends with suffix",
+        "syntax": "expect: text endsWith suffix",
+        "example": "expect: filename endsWith \".txt\"",
+        "types": "Strings only"
+      }
+    }
+  },
+
+  "common_patterns": [
+    {
+      "name": "Simple arithmetic test",
+      "description": "Testing basic math operations",
+      "use_case": "Verify calculation correctness",
+      "code": "test:\n  name: \"adds two numbers\"\n  confidence: 0.99\n  given:\n    a: 5\n    b: 3\n  when:\n    - \"sum = add(a, b)\"\n  then:\n    - \"expect: sum == 8\""
+    },
+    {
+      "name": "Multi-step calculation",
+      "description": "Chaining multiple operations",
+      "use_case": "Complex mathematical formulas",
+      "code": "test:\n  name: \"calculates pythagorean theorem\"\n  confidence: 0.99\n  given:\n    a: 3\n    b: 4\n  when:\n    - \"aSquared = power(a, 2)\"\n    - \"bSquared = power(b, 2)\"\n    - \"cSquared = add(aSquared, bSquared)\"\n    - \"c = sqrt(cSquared)\"\n  then:\n    - \"expect: c == 5\""
+    },
+    {
+      "name": "String manipulation",
+      "description": "Testing string operations and assertions",
+      "use_case": "Text formatting, validation",
+      "code": "test:\n  name: \"formats user greeting\"\n  confidence: 0.95\n  given:\n    firstName: \"John\"\n    lastName: \"Doe\"\n  when:\n    - \"fullName = concat(firstName, \" \", lastName)\"\n    - \"greeting = concat(\"Hello, \", fullName, \"!\")\"\n  then:\n    - \"expect: greeting == \"Hello, John Doe!\"\"\n    - \"expect: greeting contains \"John\"\"\n    - \"expect: greeting startsWith \"Hello\"\"\n    - \"expect: greeting endsWith \"!\"\""
+    },
+    {
+      "name": "Edge case testing",
+      "description": "Testing boundaries and special values",
+      "use_case": "Ensure robustness",
+      "code": "test:\n  name: \"handles negative numbers\"\n  confidence: 0.90\n  given:\n    negative: -10\n    positive: 5\n  when:\n    - \"absolute = abs(negative)\"\n    - \"minimum = min(negative, positive)\"\n  then:\n    - \"expect: absolute == 10\"\n    - \"expect: minimum == -10\"\n    - \"expect: negative < 0\""
+    },
+    {
+      "name": "Temperature conversion",
+      "description": "Domain-specific calculation",
+      "use_case": "Unit conversions",
+      "code": "test:\n  name: \"converts celsius to fahrenheit\"\n  confidence: 0.99\n  given:\n    freezing: 0\n    boiling: 100\n  when:\n    - \"freezingF = celsiusToFahrenheit(freezing)\"\n    - \"boilingF = celsiusToFahrenheit(boiling)\"\n  then:\n    - \"expect: freezingF == 32\"\n    - \"expect: boilingF == 212\""
+    }
+  ],
+
+  "external_functions": {
+    "description": "Call your own TypeScript/JavaScript functions from tests (v0.1.0+)",
+    "overview": "Vyb can execute external Node.js functions, enabling you to test your actual code with TDD",
+
+    "setup": {
+      "step1": "Create vyb.config.yaml in your project root",
+      "step2": "Specify runtime and module paths",
+      "step3": "Write tests that call your functions",
+      "step4": "Compile TypeScript to JavaScript (if needed)",
+      "step5": "Run tests with 'vyb run'"
+    },
+
+    "config_format": {
+      "file": "vyb.config.yaml",
+      "example": "runtime: node\nmodules:\n  - ./dist/combat.js\n  - ./dist/player.js",
+      "fields": {
+        "runtime": "Currently only 'node' is supported",
+        "modules": "Array of paths to compiled JavaScript files (relative to config file)"
+      }
+    },
+
+    "test_example": {
+      "description": "Test calling external function",
+      "javascript_code": "// dist/combat.js\nfunction calculateDamage(attack, defense) {\n  return Math.max(attack - defense, 1);\n}\nmodule.exports = { calculateDamage };",
+      "test_code": "test:\n  name: \"calculates combat damage\"\n  given:\n    attack: 20\n    defense: 5\n  when:\n    - \"damage = calculateDamage(attack, defense)\"\n  then:\n    - \"expect: damage == 15\"",
+      "how_it_works": "Vyb spawns Node.js, imports your modules, calls the function, and returns the result"
+    },
+
+    "typescript_support": {
+      "description": "For TypeScript projects, compile to JavaScript first",
+      "workflow": [
+        "Write TypeScript code in src/",
+        "Configure tsconfig.json with outDir: './dist'",
+        "Run 'tsc' to compile",
+        "Point vyb.config.yaml to dist/*.js files",
+        "Run vyb tests"
+      ],
+      "example_config": "runtime: node\nmodules:\n  - ./dist/combat.js  # Compiled from src/combat.ts"
+    },
+
+    "important_notes": [
+      "Module paths are relative to vyb.config.yaml location",
+      "Functions must be exported via module.exports",
+      "Supports numbers, strings, booleans (primitives)",
+      "Async functions not yet supported (planned)",
+      "Each test run spawns Node.js (~100-200ms overhead)"
+    ]
+  },
+
+  "tdd_workflow": {
+    "description": "Test-Driven Development workflow with Vyb - RED, GREEN, REFACTOR",
+    "overview": "Vyb is optimized for AI-assisted TDD. Write tests first, see them fail, implement code, watch them pass.",
+
+    "red_phase": {
+      "goal": "Write tests that FAIL (no implementation exists yet)",
+      "importance": "If tests pass immediately, you're not doing TDD!",
+
+      "common_mistake": {
+        "problem": "Writing tests that only use built-in functions - these pass immediately!",
+        "example_wrong": {
+          "code": "test:\n  when:\n    - \"area = multiply(width, height)\"  # Uses built-in multiply()\n  then:\n    - \"expect: area == 20\"",
+          "why_bad": "This test passes immediately because multiply() is a built-in function. You're not testing YOUR code, just Vyb's built-ins!"
+        },
+        "example_correct": {
+          "code": "test:\n  when:\n    - \"area = calculateRoomArea(width, height)\"  # Calls YOUR function\n  then:\n    - \"expect: area == 20\"",
+          "why_good": "This test FAILS until you implement calculateRoomArea(). That's proper TDD - RED phase!"
+        }
+      },
+
+      "comparison_operators": {
+        "problem": "Comparison operators (< > <= >=) only work in 'then' blocks, not 'when' blocks",
+        "example_wrong": {
+          "code": "when:\n  - \"inBounds = x < width\"  # ERROR: Can't use < in 'when'",
+          "error": "Vyb doesn't support comparison operators in 'when' statements"
+        },
+        "example_correct": {
+          "code": "when:\n  - \"inBounds = isInBounds(x, y, width, height)\"  # Call external function\nthen:\n  - \"expect: inBounds == true\"  # Comparisons work in 'then'",
+          "why_good": "Comparisons belong in assertions (then), logic belongs in functions (when)"
+        }
+      },
+
+      "checklist": [
+        "Tests call external functions (not just built-ins)",
+        "No comparison operators in 'when' blocks",
+        "Tests fail with 'function not found' or 'module not found' errors",
+        "Ready to implement functions to make tests pass"
+      ]
+    },
+
+    "green_phase": {
+      "goal": "Implement code to make tests PASS",
+      "workflow": [
+        "Create TypeScript/JavaScript source file",
+        "Implement the function",
+        "Compile (if TypeScript)",
+        "Run tests",
+        "Fix implementation until tests pass"
+      ],
+      "example": "// src/combat.ts\nexport function calculateDamage(attack: number, defense: number): number {\n  return Math.max(attack - defense, 1);  // Minimum 1 damage\n}\n\n// Compile: tsc\n// Test: vyb run tests/\n// Result: ✅ Tests pass!"
+    },
+
+    "refactor_phase": {
+      "goal": "Improve code while keeping tests passing",
+      "safety": "Tests ensure refactoring doesn't break functionality",
+      "example": "Can change implementation details, optimize, rename internals - tests verify behavior stays correct"
+    },
+
+    "watch_mode": {
+      "description": "Auto-rerun tests on file changes for instant feedback",
+      "command": "vyb run --watch",
+      "use_case": "Active TDD development - save file, see results immediately",
+      "tip": "Run 'tsc --watch' in one terminal, 'vyb run --watch' in another for complete TDD loop"
+    },
+
+    "json_output": {
+      "description": "Machine-readable test results for LLMs",
+      "command": "vyb run --json",
+      "use_case": "AI parses failures, suggests fixes, iterates autonomously",
+      "benefit": "LLM can read exact error messages and write precise fixes"
+    },
+
+    "complete_tdd_example": {
+      "description": "Full TDD cycle from test to implementation",
+      "step1_write_test": {
+        "file": "tests/combat.test.vyb",
+        "code": "test:\n  name: \"calculates damage with defense\"\n  given:\n    attack: 20\n    defense: 5\n  when:\n    - \"damage = calculateDamage(attack, defense)\"\n  then:\n    - \"expect: damage == 15\""
+      },
+      "step2_run_fails": {
+        "command": "vyb run tests/",
+        "result": "❌ FAIL: function calculateDamage not found",
+        "status": "RED phase - expected!"
+      },
+      "step3_implement": {
+        "file": "src/combat.ts",
+        "code": "export function calculateDamage(attack: number, defense: number): number {\n  return attack - defense;\n}"
+      },
+      "step4_compile": {
+        "command": "tsc",
+        "result": "dist/combat.js created"
+      },
+      "step5_run_passes": {
+        "command": "vyb run tests/",
+        "result": "✅ PASS: calculates damage with defense",
+        "status": "GREEN phase - success!"
+      },
+      "step6_refactor": {
+        "improvement": "Add minimum damage of 1",
+        "new_code": "return Math.max(attack - defense, 1);",
+        "verify": "Tests still pass after refactoring"
+      }
+    }
+  },
+
+  "cli": {
+    "commands": {
+      "run": {
+        "description": "Run tests matching pattern",
+        "usage": "vyb run [pattern] [flags]",
+        "examples": [
+          "vyb run                     # Run all *.test.vyb in current directory",
+          "vyb run examples/           # Run all tests in examples/",
+          "vyb run test.test.vyb       # Run specific test file",
+          "vyb run --watch             # Watch mode - auto-rerun on changes",
+          "vyb run --json              # Output results as JSON"
+        ],
+        "flags": {
+          "--watch, -w": "Watch for file changes and re-run tests automatically",
+          "--json": "Output results in JSON format (machine-readable)"
+        }
+      },
+      "init": {
+        "description": "Initialize Vyb in current directory",
+        "usage": "vyb init",
+        "creates": [
+          "vyb.config.json - Configuration file",
+          "example.test.vyb - Example test file"
+        ]
+      },
+      "version": {
+        "description": "Show Vyb version",
+        "usage": "vyb --version"
+      }
+    },
+    "exit_codes": {
+      "0": "All tests passed",
+      "1": "One or more tests failed"
+    }
+  },
+
+  "output_formats": {
+    "pretty": {
+      "description": "Human-readable output with colors and emoji (default)",
+      "example": "🌊 Vyb v0.1.0-alpha\n\nRunning test.vyb:\n  ✅ adds numbers (confident: 0.95)\n\nTests: 1 passed, 0 failed, 1 total\nTime: 0.001s"
+    },
+    "json": {
+      "description": "Machine-readable JSON output",
+      "usage": "vyb run --json",
+      "schema": {
+        "summary": {
+          "total": "number - total test count",
+          "passed": "number - passed test count",
+          "failed": "number - failed test count",
+          "duration_seconds": "float - total execution time"
+        },
+        "tests": "array of test results",
+        "test_result": {
+          "name": "string - test name",
+          "file": "string - test file path",
+          "status": "string - 'pass' or 'fail'",
+          "error": "string - error message if failed (optional)",
+          "duration_seconds": "float - test execution time",
+          "confidence": "float - confidence level"
+        }
+      },
+      "example": "{\n  \"summary\": {\n    \"total\": 1,\n    \"passed\": 1,\n    \"failed\": 0,\n    \"duration_seconds\": 0.001\n  },\n  \"tests\": [\n    {\n      \"name\": \"adds numbers\",\n      \"file\": \"test.vyb\",\n      \"status\": \"pass\",\n      \"duration_seconds\": 0.001,\n      \"confidence\": 0.95\n    }\n  ]\n}"
+    }
+  },
+
+  "best_practices": {
+    "naming": {
+      "do": "Use descriptive test names that explain what is being tested",
+      "example_good": "calculates 15% tip on $100 bill",
+      "example_bad": "test1"
+    },
+    "confidence": {
+      "high": "0.95-1.0 - Simple operations, well-understood requirements",
+      "medium": "0.85-0.94 - Complex business logic, some uncertainty",
+      "low": "0.70-0.84 - Edge cases, unclear requirements, experimental"
+    },
+    "test_size": {
+      "do": "Keep tests focused on a single behavior",
+      "dont": "Test multiple unrelated behaviors in one test"
+    },
+    "assertions": {
+      "do": "Use multiple specific assertions rather than one vague assertion",
+      "example": "expect: result > 0 AND expect: result < 100 (better than just expect: result == 50)"
+    }
+  },
+
+
+  "limitations": {
+    "current_version": [
+      "No async/await support yet",
+      "No array/object manipulation in expressions (only primitives)",
+      "No custom error messages in assertions",
+      "External functions: ~50-100ms overhead per call (subprocess)"
+    ],
+    "supported_runtimes": [
+      "node (JavaScript/TypeScript)"
+    ],
+    "coming_soon": [
+      "lua (v0.2.0)",
+      "python (v0.2.0)",
+      "go (planned)"
+    ]
+  }
+}

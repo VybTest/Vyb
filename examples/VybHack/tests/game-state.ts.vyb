@@ -1,0 +1,116 @@
+"initializes game with player and dungeon":
+  confidence: 0.95
+  given:
+    width: 20
+    height: 15
+    playerX: 10
+    playerY: 7
+  when:
+    - "game = createGame(width, height, playerX, playerY)"
+    - "dungeonWidth = getGameWidth(game)"
+    - "dungeonHeight = getGameHeight(game)"
+  then:
+    - "expect: dungeonWidth == 20"
+    - "expect: dungeonHeight == 15"
+
+"gets player from game state":
+  confidence: 0.95
+  given:
+    width: 20
+    height: 15
+    playerX: 5
+    playerY: 5
+  when:
+    - "game = createGame(width, height, playerX, playerY)"
+    - "player = getPlayer(game)"
+    - "x = getEntityX(player)"
+    - "y = getEntityY(player)"
+  then:
+    - "expect: x == 5"
+    - "expect: y == 5"
+
+"adds enemy to game state":
+  confidence: 0.95
+  given:
+    enemyX: 15
+    enemyY: 10
+    enemyHP: 30
+    enemyAtk: 10
+    enemyDef: 3
+  when:
+    - "game = createGame(20, 15, 5, 5)"
+    - "enemy = createEnemy(enemyX, enemyY, enemyHP, enemyAtk, enemyDef)"
+    - "newGame = addEnemy(game, enemy)"
+    - "enemyCount = getEnemyCount(newGame)"
+  then:
+    - "expect: enemyCount == 1"
+
+"checks if tile is walkable floor":
+  confidence: 0.99
+  given:
+    floor: 0
+  when:
+    - "walkable = isTileWalkable(floor)"
+  then:
+    - "expect: walkable == true"
+
+"checks if tile is blocking wall":
+  confidence: 0.99
+  given:
+    wall: 1
+  when:
+    - "walkable = isTileWalkable(wall)"
+  then:
+    - "expect: walkable == false"
+
+"gets tile at dungeon position":
+  confidence: 0.90
+  given:
+    x: 0
+    y: 0
+  when:
+    - "game = createGame(20, 15, 10, 7)"
+    - "tile = getTileAt(game, x, y)"
+  then:
+    - "expect: tile == 1"
+
+"player can move to carved floor tile":
+  confidence: 0.95
+  given:
+    currentX: 5
+    currentY: 5
+    newX: 6
+    newY: 5
+    floorTile: 0
+  when:
+    - "game = createGame(20, 15, currentX, currentY)"
+    - "carved = setTileAt(game, newX, newY, floorTile)"
+    - "canMove = canPlayerMove(carved, newX, newY)"
+  then:
+    - "expect: canMove == true"
+
+"player cannot move to wall tile":
+  confidence: 0.95
+  given:
+    currentX: 1
+    currentY: 1
+    wallX: 0
+    wallY: 1
+  when:
+    - "game = createGame(20, 15, currentX, currentY)"
+    - "canMove = canPlayerMove(game, wallX, wallY)"
+  then:
+    - "expect: canMove == false"
+
+"player cannot move out of bounds":
+  confidence: 0.95
+  given:
+    currentX: 5
+    currentY: 5
+    outOfBoundsX: -1
+    outOfBoundsY: 5
+  when:
+    - "game = createGame(20, 15, currentX, currentY)"
+    - "canMove = canPlayerMove(game, outOfBoundsX, outOfBoundsY)"
+  then:
+    - "expect: canMove == false"
