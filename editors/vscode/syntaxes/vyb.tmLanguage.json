@@ -1,0 +1,82 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Vyb",
+  "scopeName": "source.vyb",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#test-name" },
+    { "include": "#keywords" },
+    { "include": "#confidence" },
+    { "include": "#expect" },
+    { "include": "#operators" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#functions" },
+    { "include": "#variables" },
+    { "include": "#yaml-structure" }
+  ],
+  "repository": {
+    "comments": {
+      "name": "comment.line.number-sign.vyb",
+      "match": "#.*$"
+    },
+    "test-name": {
+      "match": "^(\"[^\"]+\")(:)",
+      "captures": {
+        "1": { "name": "entity.name.function.vyb" },
+        "2": { "name": "punctuation.separator.vyb" }
+      }
+    },
+    "keywords": {
+      "name": "keyword.control.vyb",
+      "match": "\\b(confidence|given|when|then|mocks|property|runtime|component|props)\\b"
+    },
+    "confidence": {
+      "match": "(confidence):\\s*(0\\.\\d+|1\\.0)",
+      "captures": {
+        "1": { "name": "keyword.control.vyb" },
+        "2": { "name": "constant.numeric.vyb" }
+      }
+    },
+    "expect": {
+      "name": "keyword.operator.vyb",
+      "match": "\\bexpect:"
+    },
+    "operators": {
+      "name": "keyword.operator.comparison.vyb",
+      "match": "(==|!=|>=|<=|>|<|\\bcontains\\b|\\bstartsWith\\b|\\bendsWith\\b|\\bmatches\\b)"
+    },
+    "strings": {
+      "name": "string.quoted.double.vyb",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.vyb",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.vyb",
+      "match": "\\b\\d+\\.?\\d*\\b"
+    },
+    "functions": {
+      "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+      "captures": {
+        "1": { "name": "entity.name.function.vyb" }
+      }
+    },
+    "variables": {
+      "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(=)",
+      "captures": {
+        "1": { "name": "variable.other.vyb" },
+        "2": { "name": "keyword.operator.assignment.vyb" }
+      }
+    },
+    "yaml-structure": {
+      "name": "punctuation.definition.list.begin.vyb",
+      "match": "^\\s*-\\s"
+    }
+  }
+}

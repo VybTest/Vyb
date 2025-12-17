@@ -1,23 +1,24 @@
-# Vyb Syntax for Sublime Text
+# Vyb Syntax for VS Code
 
 Syntax highlighting for Vyb test files.
 
 ## Installation
 
-Copy the syntax file to your Sublime Text packages:
+### From Source
 
-```bash
-# macOS
-cp Vyb.sublime-syntax ~/Library/Application\ Support/Sublime\ Text/Packages/User/
+1. Copy the `vscode` folder to your VS Code extensions directory:
 
-# Linux
-cp Vyb.sublime-syntax ~/.config/sublime-text/Packages/User/
+   ```bash
+   # macOS/Linux
+   cp -r vscode ~/.vscode/extensions/vyb
 
-# Windows
-copy Vyb.sublime-syntax "%APPDATA%\Sublime Text\Packages\User\"
-```
+   # Windows
+   xcopy /E vscode "%USERPROFILE%\.vscode\extensions\vyb"
+   ```
 
-Restart Sublime Text. Open a `.vyb` file - syntax highlighting activates automatically.
+2. Restart VS Code
+
+3. Open a `.vyb` file - syntax highlighting activates automatically
 
 ## Features
 
