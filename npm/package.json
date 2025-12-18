@@ -1,6 +1,6 @@
 {
-  "name": "vyb",
-  "version": "0.0.0",
+  "name": "vybtest",
+  "version": "0.1.0",
   "description": "AI-Native Testing Framework - Write tests in YAML, get structured output for autonomous TDD",
   "keywords": [
     "testing",

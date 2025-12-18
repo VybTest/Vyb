@@ -45,9 +45,16 @@ function getDownloadUrl(version, platform, arch) {
 function download(url) {
   return new Promise((resolve, reject) => {
     const request = (url) => {
-      https.get(url, (response) => {
+      const parsedUrl = new URL(url);
+      const options = {
+        hostname: parsedUrl.hostname,
+        path: parsedUrl.pathname + parsedUrl.search,
+        headers: {
+          'User-Agent': 'vybtest-npm-installer'
+        }
+      };
+      https.get(options, (response) => {
         if (response.statusCode === 302 || response.statusCode === 301) {
-          // Follow redirect
           request(response.headers.location);
           return;
         }

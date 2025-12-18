@@ -15,8 +15,8 @@
 
 <p align="center">
   <a href="https://github.com/VybTest/Vyb/actions"><img src="https://img.shields.io/github/actions/workflow/status/VybTest/Vyb/release.yml?style=flat-square" alt="build"></a>
-  <a href="https://www.npmjs.com/package/vyb"><img src="https://img.shields.io/npm/v/vyb.svg?style=flat-square" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/vyb"><img src="https://img.shields.io/npm/dm/vyb.svg?style=flat-square" alt="npm downloads"></a>
+  <a href="https://www.npmjs.com/package/vybtest"><img src="https://img.shields.io/npm/v/vybtest.svg?style=flat-square" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/vybtest"><img src="https://img.shields.io/npm/dm/vybtest.svg?style=flat-square" alt="npm downloads"></a>
   <a href="https://github.com/VybTest/Vyb/blob/main/LICENSE"><img src="https://img.shields.io/github/license/VybTest/Vyb?style=flat-square" alt="license"></a>
 </p>
 
@@ -32,7 +32,7 @@
 ## Installation
 
 ```bash
-npm install -g vyb
+npm install -g vybtest
 ```
 
 Or build from source:
